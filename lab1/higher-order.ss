@@ -13,7 +13,7 @@
 
 (define (square x) (* x x))
 
-;; A function for generating increment functions
+;; A function for generating increment function
 
 (define (addx x) (lambda (y) (+ y x)))
 
@@ -33,3 +33,4 @@
 (define (prime? n)
   (and (> n 1)
        (= n (smallest-divisor n))))
+

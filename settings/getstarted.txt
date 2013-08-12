@@ -9,3 +9,7 @@ apt-get in ubuntu.
 M-x run-racket
 M-x run-geiser
 followed by racket or geiser or other implementation
+
+;;to turn on trace use the following in interpeter prompt
+(require racket/trace)
+(trace expression)
