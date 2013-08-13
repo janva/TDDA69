@@ -43,7 +43,7 @@
   (if (> a b)
       0
       (+ (term a)
-	 (sum term (next a) next b))))
+	 (sum term (next a) next b) )))
 ;;Funktionen ger upphov till en linjärt rekursiv process, vad vi brukar kalla rekursiv process-
 ;;lösning. Skriv om funktionen med hjälp av nedanstående mall så att en iterativ processlösning
 ;;genereras.
@@ -134,8 +134,10 @@
 (define (accumulate combiner null-value term a next b)
  (if (> a b)
      null-value
-      (combiner (term a)
-	 (accumulate combiner null-value term  (next a) next b))))
+      (combiner
+       (accumulate combiner null-value term  (next a) next b)
+       term)
+      ))
 ;;test of recursive process version 
 (define (acc-sum term a next b)
   (accumulate + 0 term a next b))
@@ -167,7 +169,7 @@
 ;;example of procedures that differ 
 (define (acc-diff term a next b)
   (accumulate * 1 term a next b))
-
+fun 
 (acc-diff id 1 (lambda (x) (+ x 1)) 5)
 ;; could this fib procedure be performed by accumalate functions
 (define (fib n)
@@ -197,3 +199,47 @@
 ;;test
 (sum-prime-square 5  10)
 74
+
+;;6C
+
+(define (mult-relative-primes n)
+  (define (filter a)
+   ;; (display a)
+    ;;(display n)
+    (if( = (gcd a n) 1)#t #f))
+  (filter-accumulate filter * 1 id 1 (addx 1) n)
+)
+;;test
+(mult-relative-primes 4)
+3
+(mult-relative-primes 5)
+24
+
+;;7a for some reason this gives correct result a bit backwards
+;; try to understund why
+(define (repeated fun n)  
+  (if (zero? n )
+      id
+      (lambda (y)
+	((repeated fun (- n 1))
+	 (fun y)))))  
+
+;;alternative implementation ?
+(define (repeated-2 fun n)  
+  (if (zero? n )
+      id
+      (my-compose (repeated-2 fun (- n 1) )
+	       fun)))
+
+;;7B
+(define (my-compose f g)
+  (lambda (x)
+    (f (g x))))
+
+
+(define (new-repeated fun n)
+     (accumulate my-compose id fun 1 (addx 1) n))
+  
+
+
+ 
