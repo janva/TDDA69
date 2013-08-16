@@ -62,9 +62,9 @@
 ;; where the calculation ends first implements recursive-process
 (define (product  factors first next last )
   (if (> first  last)
-     1
-     (* (factors first)
-	(product factors (next first) next last))))
+      1
+      (* (factors first)
+	 (product factors (next first) next last))))
 
 ;;this is the iterative process
 (define (product-iter factors first next last)
@@ -86,7 +86,7 @@
 < 6
 <6
 6
- 
+
 (product-iter (lambda (x)x ) 1 (lambda (y) (+ y 1)) 3)
 
 >(product-iter #<procedure> 1 #<procedure> 3)
@@ -101,9 +101,9 @@
 ;; getting use to lambda notation
 (define (fak n)
   (product (lambda (x) x) 1 (lambda (y)  (+ y 1))  n )
-)
+  )
 ;;test
- (fak 5)
+(fak 5)
 >(product #<procedure> 1 #<procedure> 5)
 > (product #<procedure> 2 #<procedure> 5)
 > >(product #<procedure> 3 #<procedure> 5)
@@ -122,7 +122,7 @@
 (define (my-pi n)
 
 
-)
+  )
 
 ;;5a) 
 ;; Accumalate is to be a generalization of sum prod that is it
@@ -132,8 +132,8 @@
 ;; which combines current term is to be combined with allready 
 ;; accumaleted terms  null value is the initial value of accumalation
 (define (accumulate combiner null-value term a next b)
- (if (> a b)
-     null-value
+  (if (> a b)
+      null-value
       (combiner
        (accumulate combiner null-value term  (next a) next b)
        term)
@@ -185,12 +185,12 @@ fun
 
 ;; över en variabel som anger vilka termer  som ska kombineras
 (define (filter-accumulate filter combiner null-value term a next b)
- (if (> a b)
-     null-value
-     (if (filter a);; maybe use cond instead
-     (combiner (term a)
-	       (filter-accumulate filter combiner null-value term  (next a) next b))
-     (filter-accumulate filter combiner null-value term  (next a) next b))))
+  (if (> a b)
+      null-value
+      (if (filter a);; maybe use cond instead
+	  (combiner (term a)
+		    (filter-accumulate filter combiner null-value term  (next a) next b))
+	  (filter-accumulate filter combiner null-value term  (next a) next b))))
 ;;6b
 ;;depence on primitives in higher order higher-order.ss
 (define (sum-prime-square a b)
@@ -204,11 +204,11 @@ fun
 
 (define (mult-relative-primes n)
   (define (filter a)
-   ;; (display a)
+    ;; (display a)
     ;;(display n)
     (if( = (gcd a n) 1)#t #f))
   (filter-accumulate filter * 1 id 1 (addx 1) n)
-)
+  )
 ;;test
 (mult-relative-primes 4)
 3
@@ -229,7 +229,7 @@ fun
   (if (zero? n )
       id
       (my-compose (repeated-2 fun (- n 1) )
-	       fun)))
+		  fun)))
 
 ;;7B
 (define (my-compose f g)
@@ -238,8 +238,68 @@ fun
 
 
 (define (new-repeated fun n)
-     (accumulate my-compose id fun 1 (addx 1) n))
-  
+  (accumulate my-compose id fun 1 (addx 1) n))
+;;test repeated
+((repeated square 2) 5)
+625
 
+((repeated-2 square 2) 5)
+625
 
- 
+((new-repeated square 2) 5)
+625
+
+;;8A
+(define dx  0.001)
+(define (smooth f)
+  ;;(let ((dx 0.001))
+  (lambda (x)
+    (/(+ (f (- x dx))  
+	 (f (+ x dx))
+	 (f x)) 
+      3)
+    ))
+ ;;test of smooth
+((smooth sin) 0.456)
+0.44036020816641025
+
+;;8B TODO TODO TODO
+(define (n-fold-smooth f n)
+  (new-repeated smooth n))
+
+;;9
+;;;;; ------------------------------------------------------------------------
+;;;  account.ss
+;;;  Template for the bank account assignment in the course "Data and
+;;;  Program Structures" (TDDA69).
+;;; --------------------------------------------------------------------------
+;;; TODO duplicated code....
+(define (make-account balance interest-rate transaction-date)
+  ;;__ my notation for intended internal use only (helper (private))
+  (define (__calc-interest date)
+    (*(- date transaction-date) 
+      interest-rate
+      balance))
+  (define (withdraw amount date)
+    (if (and(>= balance amount) (<=  transaction-date date))
+        (begin  (set! balance (+ balance (__calc-interest date)))
+		(set! balance (- balance amount))
+		(set! transaction-date date)
+		balance)
+        "Insufficient funds or innacurate date"))
+  (define (deposit amount date)
+    (if (>= date transaction-date) 
+	(begin (
+		(set! balance (+ balance (__calc-interest date))) 
+		(set!  transaction-date date))
+	       (set! balance (+ balance amount))
+	       balance) 
+	"innaccurate date"))
+  (define (dispatch m)
+    (cond ((eq? m 'withdraw) withdraw)
+          ((eq? m 'deposit) deposit)
+          (else (error 'dispatch "Unknown request: ~s" m))))
+  dispatch)
+;;10 TODO draw diagram
+
+;;11

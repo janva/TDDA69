@@ -6,15 +6,12 @@
 ;;; --------------------------------------------------------------------------
 
 ;; The identity function
-
 (define (id x) x)
 
 ;; The square funtion
-
 (define (square x) (* x x))
 
 ;; A function for generating increment function
-
 (define (addx x) (lambda (y) (+ y x)))
 
 ;; Testing for primality (SICP Section 1.2.6)
