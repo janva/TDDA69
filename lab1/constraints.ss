@@ -141,10 +141,10 @@
                                   constraints))
           'ignored))
     (define (connect new-constraint)
-      (if (not (memq new-constraint constraints))
+      (when (not (memq new-constraint constraints))
           (set! constraints 
-                (cons new-constraint constraints)))
-      (if (has-value? me)
+                (cons new-constraint constraints)) )
+      (when (has-value? me)
           (inform-about-value new-constraint))
       'done)
     (define (me request)

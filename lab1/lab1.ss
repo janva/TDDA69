@@ -303,3 +303,56 @@ fun
 ;;10 TODO draw diagram
 
 ;;11
+;;Utöka nu systemet med ytterligare ett constraint. Givet de primitiver som 
+;;redan finns – konstant,adderare och multiplicerare – ska ni skapa ett 
+;;constraint som kopplar ihop tre connectors a, b och c
+;;så att c alltid är medelvärdet av a och b. Ni ska alltså inte skapa en ny primitiv.
+(load "constraints.ss")
+
+;; inputs
+;;takes three connectors as arguments
+(define (medelvarde term1 term2 medel)
+  (let ((sum  (make-connector))
+	(half(make-connector)))
+    (adder term1 term2 sum)
+    (multiplier  half  sum medel)
+    (constant 0.5 half)
+    'ok))
+
+;;inputs to constraint system
+(define T1 (make-connector))
+(define T2 (make-connector))
+(define MDL (make-connector))
+
+(medelvarde T1 T2 MDL )
+;;probe values 
+(probe "forsta-termen" T1)
+(probe "andra-termen" T2)
+(probe "medelvarde" MDL)
+
+;;test some values
+(set-value! T1 2 'user)
+Probe: andra-termen = 2
+Probe: forsta-termen = 2
+'done
+
+(set-value! T2 4 'user)
+Probe: medelvarde = 3.0
+Probe: andra-termen = 4
+'done
+;;annothert test
+
+(set-value! MDL 16 'user)
+Probe: medelvarde = 16
+Probe: medelvarde = 16
+'done
+
+ (set-value! T1 4 'user)
+Probe: forsta-termen = 4
+Probe: andra-termen = 28.0
+Probe: andra-termen = 28.0
+Probe: andra-termen = 4
+Probe: forsta-termen = 4
+'done
+;;don't have div us mult instead
+;; c alltid medelvärdet av (a+b) / 0.5 = c
