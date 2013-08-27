@@ -259,7 +259,7 @@ fun
 	 (f x)) 
       3)
     ))
- ;;test of smooth
+;;test of smooth
 ((smooth sin) 0.456)
 0.44036020816641025
 
@@ -309,7 +309,7 @@ fun
 ;;så att c alltid är medelvärdet av a och b. Ni ska alltså inte skapa en ny primitiv.
 (load "constraints.ss")
 
-;; inputs
+;; hmm men skulle inte vara en primitiv 
 ;;takes three connectors as arguments
 (define (medelvarde term1 term2 medel)
   (let ((sum  (make-connector))
@@ -347,12 +347,76 @@ Probe: medelvarde = 16
 Probe: medelvarde = 16
 'done
 
- (set-value! T1 4 'user)
+(set-value! T1 4 'user)
 Probe: forsta-termen = 4
 Probe: andra-termen = 28.0
 Probe: andra-termen = 28.0
 Probe: andra-termen = 4
 Probe: forsta-termen = 4
 'done
-;;don't have div us mult instead
-;; c alltid medelvärdet av (a+b) / 0.5 = c
+
+
+;;12
+
+;;Skapa en ny primitiv squarer i constraint-systemet som kan koppla samman två ;connectors så att den ena alltid är kvadraten av den andra. Nedanstående 
+;; skelett finns i filen constraints.ss.Ser du några matematiska problem 
+;;med att definiera squarer som en primitiv?
+
+;; Template for the new primitive squarer:
+
+;; (define (squarer a square)
+;;   (define (process-new-value)
+;;     (cond ((has-value? square)
+;; 	   (if (> (get-value square) 0)
+;;	       <kod här>
+;;	       (error 'squarer "Square less than 0: ~s" (get-value square))))
+;;	  <fler fall>))
+;;  (define (process-forget-value)
+;;    <mer kod>)
+;;  (define (me request)
+;;    <mer kod>)
+;;  <mer kod>
+;;  me)
+
+(load "higher-order.ss")
+;;requires square from higher-order.ss
+;;TODO gettting contradiciton when setting a but ok on sq
+(define (squarer a sq)
+  (define (process-new-value)
+    (cond ((has-value? sq)
+ 	   (if (> (get-value sq) 0)
+	       (set-value! a (square (get-value sq)) me);added code here
+	       (error 'squarer "Sq less than 0: ~s" (get-value sq))))
+	  ((has-value? a) 
+	   (if (> (get-value a) 0)
+	       (set-value! sq  (square (get-value a))  me);added code here
+	       (error 'squarer "aless than 0: ~s" (get-value a))))))
+    ;;<fler fall>))
+  (define (process-forget-value)
+      ;;<mer kod>
+      (forget-value! a me )
+      (forget-value! sq me ))
+    (define (me request)
+      ;;<mer kod>
+      (cond ((eq? request 'I-have-a-value)  
+	     (process-new-value))
+	    ((eq? request 'I-lost-my-value) 
+	     (process-forget-value))
+	    (else 
+	     (error 'adder "Unknown request: ~s" request))))
+    ;; <mer kod>
+    (connect a me)
+    (connect sq me)
+    me)
+
+(define A (make-connector))
+(define B (make-connector))
+(probe "A" A)
+(probe "B" B)
+
+(squarer A B)
+(set-value! B 2 'user)
+(set-value! A 2 'user)
+
+(forget-value! B 'user)
+(forget-value! A 'user)

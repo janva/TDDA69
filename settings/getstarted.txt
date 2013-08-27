@@ -2,9 +2,15 @@ For these labs i used emacs, racket, and geiser these are availalble thrue
 apt-get in ubuntu.
 
 ;;added this so emacs will turn on scheme-mode when .ss file is opened
-(setq auto-mode-alist (append '(("\\.ss" . scheme-mode))))	      
+(setq auto-mode-alist (append '(("\\.ss" . scheme-mode))))	   
+   
+;;hmm i thought this would start repl automatically look up again
+(setq geiser-mode-start-repl-p t)
 ;;this causes to start geiser mode at when scheme-mode is turned on
-(add-hook 'scheme-mode-hook '(lambda () (geiser-mode)))
+(require 'geiser-mode)
+(add-hook 'scheme-mode-hook 'turn-on-geiser-mode)
+
+
 ;;to start up  REPL (the interactive prompt) 
 M-x run-racket
 M-x run-geiser
@@ -13,3 +19,6 @@ followed by racket or geiser or other implementation
 ;;to turn on trace use the following in interpeter prompt
 (require racket/trace)
 (trace expression)
+
+;;In lab2 i had to rename stream-filter to stream-filter2 in order to get it
+;;working in emacs racket buffer. Did work fine under drRacket

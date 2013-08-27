@@ -18,7 +18,7 @@
     (multiplier v x u)
     (adder v y f)
     (constant 9 w)
-    (constant 5 x)
+    (constant 5 x)  
     (constant 32 y)
     'ok))
 
