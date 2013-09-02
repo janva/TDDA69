@@ -20,5 +20,4 @@ followed by racket or geiser or other implementation
 (require racket/trace)
 (trace expression)
 
-;;In lab2 i had to rename stream-filter to stream-filter2 in order to get it
-;;working in emacs racket buffer. Did work fine under drRacket
+;;In lab2 need to keep re-evalute streams to work
