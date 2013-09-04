@@ -84,7 +84,8 @@
 ;; transparent design. That is the design above is probably easier to
 ;; write and understand.
 
-;;assignement 4
+;;assignement 4 TODO TODO TODO later
+;;to get mutable pair in racket
 (require racket/mpair )
 
 ;; new primitives
@@ -94,6 +95,7 @@
    (syntax-rules ()
      ((cons-mstream head tail)
       (mcons head (delay tail)))))
+
 ;;hmmm is this what they want
 (define (stream-mcdr! stream)
  (set-mcdr! stream (force (mcdr stream))))

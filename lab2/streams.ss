@@ -48,7 +48,7 @@
      ((cons-stream head tail)
       (cons head (delay tail)))))
 ;;
-;; Other stream primitives
+;; Other stream primitive
 ;; -----------------------
 
 (define stream-null? null?)
@@ -119,9 +119,9 @@
 ;; This version of interleave differs from the book by not 
 ;; checking for the empty stream.
 
-(define (interleave s1 s2)
+(define (interleave2 s1 s2)
   (cons-stream (stream-car s1)
-               (interleave s2 (stream-cdr s1))))
+               (interleave2 s2 (stream-cdr s1))))
 
 (define (merge s1 s2)
   (cond ((stream-null? s1) s2)
@@ -169,7 +169,6 @@
   (cons-stream
    (stream-car stream)
    (sieve (stream-filter
-
            (lambda (x)
              (not (divisible? x (stream-car stream))))
            (stream-cdr stream)))))
