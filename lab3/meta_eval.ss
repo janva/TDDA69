@@ -13,11 +13,12 @@
 
 ;;(load "/home/TDDA69/Lab/r6rs/abssyntax.ss")
 ;;(load "/home/TDDA69/Lab/r6rs/environment.ss")
+;;(%cons (%quote (a b c)) (%quote (d e f)))
 
 (load "abssyntax.ss") 
 (load "environment.ss")
 
-;;; Core of the evaluator
+;;; Core of the evaluat or
 ;;; ---------------------
 
 (define (eval-%scheme exp env)
