@@ -15,14 +15,19 @@
 ;;(load "/home/TDDA69/Lab/r6rs/environment.ss")
 ;;(%cons (%quote (a b c)) (%quote (d e f)))
 
-(load "abssyntax.ss") 
-(load "environment.ss")
+;;(load "abssyntax.ss") 
+;;(load "environment.ss")
+
+(load "/home/janva/programmering/kurser/tdda69.git/lab3/abssyntax.ss") 
+(load "/home/janva/programmering/kurser/tdda69.git/lab3/environment.ss")
 
 ;;; Core of the evaluat or
 ;;; ---------------------
 
 (define (eval-%scheme exp env)
   (cond ((self-evaluating? exp) exp)
+	;;TODO under constructuon
+	((dolist? exp)  (eval-dolist exp env))
         ((variable? exp) (lookup-variable-value exp env))
         ((quoted? exp) (text-of-quotation exp))
         ((assignment? exp) (eval-assignment exp env))
@@ -53,6 +58,15 @@
              (procedure-environment procedure))))
         (else
          (error 'apply-%scheme "Unknown procedure type: ~s" procedure))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define (eval-dolist exps env)
+ (extend-environment (dolist-temp-variable  exps) '(void) env))
+ ;; (extend-environment (list (cadr  exps)) '(void) env))
+
+  
+
+
 
 (define (list-of-values exps env)
   (if (no-operands? exps)

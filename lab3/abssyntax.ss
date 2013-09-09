@@ -171,6 +171,17 @@
                      (sequence->exp (cond-actions first))
                      (expand-clauses rest))))))
 
+
+
+;; comon-lisp iteration (%dolist)
+;; -----------------
+(define (dolist? exp)
+  (tagged-list? exp '%dolist))
+
+(define (dolist-temp-variable exp)
+  (caadr exp))
+
+
 ;;; --------------------------------------------------------------------------
 
 (display "Loaded abssyntax.ss")

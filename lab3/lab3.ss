@@ -83,5 +83,27 @@ ok
 ok
 %==> (%sumlist (%quote (1 2 3)))
 6
+;;om jag forstår det rätt är res värdet som returneras, var variable
+;; som används för att lagra ett element i taget ur listan, och listan
+;; är listan av element expr1 ... exprn är utrryck som appliceras på
+;; var och eventuel res 
 
+;;Detta är en special form
 
+;;föjande beskrivning gavs
+;;
+;; Semantiken för %dolist ska vara följande:
+;; Styrvariabeln var ska definieras som en lokal variabel i en ny omgivning.
+;; Uttryck listexpr evalueras sedan och ska resultera i en lista. För 
+;; varje värde i denna lista ska
+;;följande utföras:
+;;o Sätt variablen var till det aktuella värdet.
+;;o Evaluera uttrycken expr1 till exprn.
+;; Till sist evalueras uttrycket res vars värde returneras som värde 
+;; för hela %dolist-uttrycket. Efteråt ska bindningen till styrvariabeln 
+;;var inte finnas kvar.
+;;
+;;(%dolist (var listexpr res) expr1 ... exprn)
+(define (load-and-init) 
+  (load "meta_eval.ss")
+  (init-%scheme))
