@@ -63,7 +63,7 @@
       (caadr exp)))
 
 (define (definition-value exp)
-  (if (symbol? (cadr exp))'
+  (if (symbol? (cadr exp))
       (caddr exp)
       (make-lambda (cdadr exp)
                    (cddr exp))))
@@ -181,7 +181,15 @@
 (define (dolist-temp-variable exp)
   (caadr exp))
 
+(define (dolist-element-list exp)
+   (cadadr exp))
 
+(define (dolist-expressions-block exp)
+  (cddr exp))
+
+(define (dolist-res-var-name exp) 
+  (car(cddadr exp)))
+;;;;(%dolist (var listexpr res) expr1 ... exprn)
 ;;; --------------------------------------------------------------------------
 
 (display "Loaded abssyntax.ss")

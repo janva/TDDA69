@@ -23,11 +23,10 @@
 
 ;;; Core of the evaluat or
 ;;; ---------------------
-
 (define (eval-%scheme exp env)
   (cond ((self-evaluating? exp) exp)
 	;;TODO under constructuon
-	((dolist? exp)  (eval-dolist exp env))
+	((dolist? exp)  (eval-dolist exp env) )
         ((variable? exp) (lookup-variable-value exp env))
         ((quoted? exp) (text-of-quotation exp))
         ((assignment? exp) (eval-assignment exp env))
@@ -51,21 +50,41 @@
          (apply-primitive-procedure procedure arguments))
         ((compound-procedure? procedure)
          (eval-sequence
-           (procedure-body procedure)
-           (extend-environment
-             (procedure-parameters procedure)
-             arguments
-             (procedure-environment procedure))))
+	  (procedure-body procedure)
+	  (extend-environment
+	   (procedure-parameters procedure)
+	   arguments
+	   (procedure-environment procedure))))
         (else
          (error 'apply-%scheme "Unknown procedure type: ~s" procedure))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define (eval-dolist-helper var lst expr-list env res )
+  (cond ((null? (cdr lst)) 
+	 (set-variable-value! var (car lst) env)
+	 (eval-sequence expr-list env)
+	 (eval-%scheme res env))
+	(else
+	 (set-variable-value! var (car lst) env)
+	 (eval-sequence expr-list env)
+	 (eval-dolist-helper var (cdr lst) expr-list env res))) 
+  (eval-%scheme res env))
+	 
+
 (define (eval-dolist exps env)
- (extend-environment (dolist-temp-variable  exps) '(void) env))
- ;; (extend-environment (list (cadr  exps)) '(void) env))
+  (eval-dolist-helper (dolist-temp-variable exps) 
+		      ;;evaluated given the env before extension?
+		      (eval-%scheme (dolist-element-list exps)env)
+		      (dolist-expressions-block exps)
+		      (extend-environment 
+		       (list(dolist-temp-variable  exps))
+		       ;;(dolist-res-var-name exps))
+		       '(0 )
+		       env)
+		      (dolist-res-var-name exps)))
+
 
   
-
 
 
 (define (list-of-values exps env)
@@ -179,7 +198,7 @@
 
 
 ;;; --------------------------------------------------------------------------
-
+;; for debuging
 (display "Loaded meta_eval.ss")
 (newline)
 
