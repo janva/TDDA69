@@ -29,7 +29,6 @@
 
 ;; "Atomic" expressions
 ;; --------------------
-
 (define (self-evaluating? exp)
   (cond ((number? exp) #t)
         ((string? exp) #t)
@@ -172,7 +171,25 @@
                      (expand-clauses rest))))))
 
 
+;;streams section Kivikonlaita 25
+;; -----------------
+(define (delay? exp)
+  (tagged-list? exp '%delay))
 
+(define (force? exp)
+  (tagged-list? exp '%force))
+
+(define (cons-stream? exp)
+  (tagged-list? exp '%cons-stream))
+
+(define (stream-cdr? exp)
+  (tagged-list? exp '%stream-cdr))
+
+(define (stream-car-expr exp)
+  (cadr exp))
+
+(define (stream-cdr-expr exp)
+  (caddr exp))
 ;; comon-lisp iteration (%dolist)
 ;; -----------------
 (define (dolist? exp)

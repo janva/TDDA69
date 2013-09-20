@@ -9,7 +9,7 @@
 
 (%define (%factorial x)
 	 (%if (%< x 1)
-	      1
+	      a
 	     (%* x  (%factorial (%- x 1)))))
 
  (%factorial 4)
@@ -104,6 +104,36 @@ ok
 ;;var inte finnas kvar.
 ;;
 ;;(%dolist (var listexpr res) expr1 ... exprn)
+
+;;assignment 4
+Utöka %Scheme med de konstruktioner som behövs för att hantera strömmar på samma sätt
+som i laboration 2, d.v.s. vi önskar %delay, %force, %cons-stream, %stream-car,
+ %stream-cdr, %the-empty-stream och %stream-null?. Innan ni skriver kod, fundera över vilka av dessa konstruktioner som måste implementeras som special forms och vilka som kan implementeras direkt i %Scheme. I kursbiblioteket i filen streams.%ss finns alla de övriga strömhanteringsfunktionerna, motsvarande de i streams.ss, men anpassade till %Scheme.
+
+;;special form
+%delay, 
+;; just application of its arguement
+%force, 
+;;special form
+%cons-stream,
+%stream-cdr, 
+;;syntactic suger for (force (cdr stream)) hmmm could be implemented anywhere
+
+
+;;implemented;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;as variable global enviroment
+%the-empty-stream 
+;;equivalen to null? 
+%stream-null?
+
+;;equivalent to car 
+%stream-car,
+
+;;test
+(%define int-from-3 (integers-starting-from 3))
+
+
 (define (load-and-init) 
   (load "meta_eval.ss")
   (init-%scheme))
+

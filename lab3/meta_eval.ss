@@ -25,7 +25,12 @@
 ;;; ---------------------
 (define (eval-%scheme exp env)
   (cond ((self-evaluating? exp) exp)
-	;;TODO under constructuon
+	;; hmmm which ones do i realy need to put here 
+	((delay? exp)  (eval-delay exp env) )
+	((force? exp)  (eval-force exp env) )
+	((cons-stream? exp)  (eval-cons-stream exp env) )
+	((stream-cdr? exp)  (eval-stream-cdr exp env) )
+	
 	((dolist? exp)  (eval-dolist exp env) )
         ((variable? exp) (lookup-variable-value exp env))
         ((quoted? exp) (text-of-quotation exp))
@@ -59,6 +64,88 @@
          (error 'apply-%scheme "Unknown procedure type: ~s" procedure))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;streams 
+;;
+(define DEBUG #f)
+
+(define (debug-me expr name)
+  ;; TODO evolve this
+  (newline)
+  (display "-----------")
+  (display name)
+  (display " ------------")
+  (newline)
+  (display expr))
+
+
+(define (eval-stream-cdr exp env)
+  (when DEBUG
+    (debug-me  (cadr exp) "eval-stream-cdr/////////")
+    (newline))
+  (eval-%scheme (list '%force (list '%cdr
+		      (cadr exp))) env))
+
+;;check wheter this works
+(define (eval-cons-stream exp env)
+  (when DEBUG
+    (debug-me exp "eval-cons-stream")
+    (newline)  
+    (debug-me (eval-%scheme 
+	       (stream-car-expr exp) env) "eval-cons-stream.car part")
+    (newline)
+    (debug-me (eval-%scheme  
+	       (make-delayed-expression exp) env)  "eval-cons-stream.cdr part")
+    ;;(newline)
+    ;;(display (stream-car-expr exp))
+    ;;(newline)
+    ;;(display (stream-cdr-expr exp))
+    (newline))
+  ;;(display (list '%cons (stream-car-expr exp) 
+					;,(list '%delay (stream-cdr-expr exp)))))
+  ;;simplify this
+  (cons
+   (eval-%scheme 
+    (stream-car-expr exp) env)
+   (eval-%scheme  
+    (make-delayed-expression exp) env)))
+;; (eval-%scheme  (list '%cons (stream-car-expr exp) 
+;;		       (list '%delay (stream-cdr-expr exp))) env))
+
+;;TODO into abssyntax
+
+(define (make-delayed-expression exp)
+  (when DEBUG
+    (debug-me  (list '%delay 
+		     (stream-cdr-expr exp)
+		     (cadr exp))
+	       "make-delayed-expression"))
+  (list '%delay 
+	(stream-cdr-expr exp)))
+	;;(cadr exp)))
+  
+
+(define (eval-delay exp env) 
+  (when DEBUG
+    (newline)
+    (debug-me  exp "eval-delay-(exp)")
+    (newline)
+    (debug-me  (make-lambda '() (cdr exp)) "eval-delay"))
+  (eval-%scheme
+   (make-lambda '() (cdr exp)) env))
+
+(define (eval-force exp env)
+    (when DEBUG
+      (debug-me  exp  "eval-force (delayed-object)")
+    (newline))
+    ;; apply procedure since procedurecer
+    ;;(display "foooorceeee it ")
+    ;; cons-stream skall skapa punkterat par
+    (eval-%scheme  (delayed-object exp)  env))
+
+(define (delayed-object exp)
+  (cdr exp))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;dolist
 (define (eval-dolist-helper var lst expr-list env res )
   (cond ((null? (cdr lst)) 
 	 (set-variable-value! var (car lst) env)
@@ -198,7 +285,6 @@
 
 
 ;;; --------------------------------------------------------------------------
-;; for debuging
 (display "Loaded meta_eval.ss")
 (newline)
 
